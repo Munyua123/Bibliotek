@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environment
+venv/
+
+# Environment variables
+.env
+
+# Flask / Python logs
+instance/
+*.log
+
+# Database
+*.sqlite3
+
+# Migrations (optional – if you want to keep migration history, remove this)
+migrations/__pycache__/
+
+# IDE/editor settings
+.vscode/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
