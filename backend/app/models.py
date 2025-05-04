@@ -30,6 +30,9 @@ class Book(db.Model,SerializerMixin):
         ),
     )
     
+    def __repr__(self):
+        return f"<Book {self.book_name} {self.book_author} {self.book_genre} {self.book_price} {self.book_stock}>"  
+    
     
 class Customer(db.Model,SerializerMixin):
     __tablename__ = 'customers'
@@ -50,6 +53,8 @@ class Customer(db.Model,SerializerMixin):
             raise ValueError("Phone number must be 10 digits")
         return phone_number 
     
+    def __repr__(self):
+        return f"<Customer {self.customer_name} {self.phone_number}>"
     
 class Order(db.Model,SerializerMixin):
     __tablename__ = 'orders'
@@ -79,4 +84,7 @@ class Order(db.Model,SerializerMixin):
             name= 'return_date_check'
         )
     )
+    
+    def __repr__(self):
+        return f"<Order {self.order_number} {self.date_issued} {self.return_date} {self.rent_fee} {self.returned}>"
     

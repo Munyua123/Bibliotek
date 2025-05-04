@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_restful import Api
 from config import Config
 from dotenv import load_dotenv
 import os
@@ -19,5 +20,7 @@ def create_app():
 
     from app.routes import main
     app.register_blueprint(main)
+    
+    api = Api(app)
 
     return app
