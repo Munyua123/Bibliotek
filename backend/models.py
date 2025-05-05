@@ -1,4 +1,4 @@
-from . import db
+from config import db
 from sqlalchemy.orm import validates
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.schema import CheckConstraint
@@ -17,7 +17,7 @@ class Book(db.Model,SerializerMixin):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now()) 
     
-    orders = db.relationship('Orders', back_populates='book')
+    orders = db.relationship('Order', back_populates='book')
     
     __table_args__=(
         CheckConstraint(
@@ -45,7 +45,7 @@ class Customer(db.Model,SerializerMixin):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
-    orders = db.relationship('Orders', back_populates='customer')
+    orders = db.relationship('Order', back_populates='customer')
     
     @validates('phone_number')
     def validate_phone_number(self, key, phone_number):

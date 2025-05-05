@@ -31,8 +31,8 @@ def get_engine_url():
     except AttributeError:
         return str(get_engine().url).replace('%', '%%')
 
-from app import db
-from app.models import Book, Customer, Order
+from config import db
+from models import Book, Customer, Order
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
