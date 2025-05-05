@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 
-function Customer() {
+function Customer({ handleCustomerDelete }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -105,6 +105,15 @@ function Customer() {
           >
             Edit user
           </Link>
+          ||
+          <button
+            className="font-medium text-red-600 dark:text-red-500 hover:underline"
+            onClick={() => {
+              handleCustomerDelete(item.id);
+            }}
+          >
+            Delete
+          </button>
         </td>
       </tr>
     );
@@ -128,7 +137,10 @@ function Customer() {
           </button>
         </NavLink>
       </div>
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <div
+        className="relative overflow-x-auto shadow-md sm:rounded-lg"
+        style={{ marginBottom: "3rem" }}
+      >
         <div className="flex items-center justify-center flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900">
           {/* Search function */}
           <label for="table-search" className="sr-only">

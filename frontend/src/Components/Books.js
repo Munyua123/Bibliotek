@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 
-function Books() {
+function Books({ handleBookDelete }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
@@ -78,9 +78,9 @@ function Books() {
   }
 
   const filteredBooks = books.filter((book) => {
-    const matchesSearch = book.book_name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      book.book_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      book.book_author.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesGenre =
       selectedGenre === "All" || book.book_genre === selectedGenre;
     return matchesSearch && matchesGenre;
@@ -117,6 +117,15 @@ function Books() {
           >
             Edit Book
           </Link>
+          ||
+          <button
+            className="font-medium text-red-600 dark:text-red-500 hover:underline"
+            onClick={() => {
+              handleBookDelete(item.id);
+            }}
+          >
+            Delete
+          </button>
         </td>
       </tr>
     );
@@ -139,7 +148,7 @@ function Books() {
       <div>
         <div
           className="relative overflow-x-auto shadow-md sm:rounded-lg"
-          style={{ marginTop: "3rem" }}
+          style={{ marginTop: "3rem", marginBottom: "3rem" }}
         >
           <div className="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
             <div>

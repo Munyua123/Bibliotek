@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-function Orders() {
+function Orders({ handleOrderDelete }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -119,12 +119,19 @@ function Orders() {
           )}
         </td>
         <td className="px-6 py-4">
-          <Link
-            to={`/orders/${item.id}`}
+          <NavLink
+            to={`/order/${item.id}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
           >
             Edit
-          </Link>
+          </NavLink>
+          ||
+          <button
+            className="font-medium text-red-600 dark:text-red-500 hover:underline"
+            onClick={() => handleOrderDelete(item.id)}
+          >
+            Delete
+          </button>
         </td>
       </tr>
     );
@@ -146,7 +153,7 @@ function Orders() {
       </div>
       <div
         className="relative overflow-x-auto shadow-md sm:rounded-lg"
-        style={{ marginTop: "3rem" }}
+        style={{ marginTop: "3rem", marginBottom: "3rem" }}
       >
         <div className="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
           <div className="relative max-w-sm">

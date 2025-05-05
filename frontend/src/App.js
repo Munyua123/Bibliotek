@@ -10,6 +10,8 @@ import AddCustomer from "./Components/AddCustomer";
 import AddBooks from "./Components/AddBooks";
 import AddOrder from "./Components/AddOrders";
 import { useNavigate } from "react-router-dom";
+import Footer from "./Components/Footer";
+import EditOrders from "./Components/EditOrders";
 
 function App() {
   const navigate = useNavigate();
@@ -32,6 +34,10 @@ function App() {
     book_name: "",
     return_date: "",
   });
+
+  const [orderList, setOrderList] = useState([]);
+  const [customerList, setCustomerList] = useState([]);
+  const [bookList, setBookList] = useState([]);
 
   const handleCustomerChange = (e) => {
     const { name, value } = e.target;
@@ -114,6 +120,55 @@ function App() {
       });
   }
 
+  const handleOrderDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this order?")) return;
+
+    try {
+      const response = await fetch(`http://localhost:5000/orders/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setOrderList(orderList.filter((order) => order.id !== id));
+      } else {
+        console.error("Failed to delete order");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleCustomerDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this customer?"))
+      return;
+    try {
+      const response = await fetch(`http://localhost:5000/customers/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setCustomerList(customerList.filter((customer) => customer.id !== id));
+      } else {
+        console.error("Failed to delete customer");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const handleBookDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this book?")) return;
+    try {
+      const response = await fetch(`http://localhost:5000/books/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setBookList(bookList.filter((book) => book.id !== id));
+      } else {
+        console.error("Failed to delete book");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   function handleBookCancel(e) {
     e.preventDefault();
     navigate("/books");
@@ -134,7 +189,10 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/books" element={<Books />} />
+        <Route
+          path="/books"
+          element={<Books handleBookDelete={handleBookDelete} />}
+        />
         <Route
           path="/add_books"
           element={
@@ -150,7 +208,10 @@ function App() {
             />
           }
         />
-        <Route path="/customers" element={<Customer />} />
+        <Route
+          path="/customers"
+          element={<Customer handleCustomerDelete={handleCustomerDelete} />}
+        />
         <Route
           path="/add_customer"
           element={
@@ -163,7 +224,10 @@ function App() {
             />
           }
         />
-        <Route path="/orders" element={<Orders />} />
+        <Route
+          path="/orders"
+          element={<Orders handleOrderDelete={handleOrderDelete} />}
+        />
         <Route
           path="/add_orders"
           element={
@@ -177,7 +241,9 @@ function App() {
             />
           }
         />
+        <Route path="/order/:id" element={<EditOrders />} />
       </Routes>
+      <Footer />
     </div>
   );
 }

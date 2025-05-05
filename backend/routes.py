@@ -39,7 +39,7 @@ def update_customer_by_id(id):
     response = make_response(jsonify(response_dict), 200)
     return response
 
-@app.route('/customer/<int:id>', methods=['DELETE'])
+@app.route('/customers/<int:id>', methods=['DELETE'])
 def delete_customer_by_id(id):
     customer = Customer.query.filter_by(id=id).first()
     
@@ -175,7 +175,7 @@ def update_book_by_id(id):
     response = make_response(jsonify(response_dict), 200)
     return response
 
-@app.route('/book/<int:id>', methods=['DELETE'])
+@app.route('/books/<int:id>', methods=['DELETE'])
 def delete_book_by(id):
     book = Book.query.filter_by(id=id).first()
     
@@ -296,7 +296,7 @@ def update_orders(id):
     response = make_response(jsonify(response_dict), 200)
     return response
 
-@app.route('/order/<int:id>', methods=['DELETE'])
+@app.route('/orders/<int:id>', methods=['DELETE'])
 def delete_order(id):
     order = Order.query.filter_by(id=id).first()
     
