@@ -1,10 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Navbar from "./Components/Navbar";
 import Home from "./Components/Home";
+import Navbar from "./Components/Navbar";
 import Books from "./Components/Books";
-import Help from "./Components/Help";
-import Profile from "./Components/Profile";
+import Customer from "./Components/Customers";
+import Orders from "./Components/Orders";
+
 
 function App() {
   return (
@@ -13,10 +14,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/books" element={<Books />} />
-        <Route path="/faq" element={<Help />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
-    </div>
+        <Route path="/customers" element={<Customer />} />
+        <Route path="/orders" element={<Orders />} />
+       </Routes>
+    </div>  
   );
 }
 
