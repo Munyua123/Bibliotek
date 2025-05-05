@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function Orders() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,12 +32,32 @@ function Orders() {
       });
   }, []);
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    return new Date(dateString).toISOString().split('T')[0];
+  const formatDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d.toISOString().split("T")[0];
   };
 
-  const displayOrders = orders.map((item) => {
+  const filteredOrders = orders.filter((order) => {
+    const matchesSearchTerm = order.customer_name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesDate =
+      !selectedDate ||
+      formatDate(order.date_issued) === formatDate(selectedDate);
+
+
+    return matchesSearchTerm && matchesDate;
+  });
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+
+  const displayOrders = currentItems.map((item) => {
     return (
       <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
         <td className="w-4 p-4">{item.id}</td>
@@ -54,12 +83,12 @@ function Orders() {
           )}
         </td>
         <td className="px-6 py-4">
-          <a
-            href="#"
+          <Link
+            to={`/orders/${item.id}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
           >
             Edit
-          </a>
+          </Link>
         </td>
       </tr>
     );
@@ -67,144 +96,27 @@ function Orders() {
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <div className="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
-        <div>
-          <button
-            id="dropdownRadioButton"
-            data-dropdown-toggle="dropdownRadio"
-            className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-            type="button"
-          >
+        <div className="relative max-w-sm">
+          <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
             <svg
-              className="w-3 h-3 text-gray-500 dark:text-gray-400 me-3"
+              className="w-4 h-4 text-gray-500 dark:text-gray-400"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
-              <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
+              <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
             </svg>
-            Last 30 days
-            <svg
-              className="w-2.5 h-2.5 ms-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 4 4 4-4"
-              />
-            </svg>
-          </button>
-          {/* <!-- Dropdown menu --> */}
-          <div
-            id="dropdownRadio"
-            className="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600"
-            data-popper-reference-hidden=""
-            data-popper-escaped=""
-            data-popper-placement="top"
-            style={{
-              position: "absolute",
-              inset: "auto auto 0px 0px",
-              margin: "0px",
-              transform: "translate3d(522.5px, 3847.5px, 0px)",
-            }}
-          >
-            <ul
-              className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
-              aria-labelledby="dropdownRadioButton"
-            >
-              <li>
-                <div className="flex items-center p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600">
-                  <input
-                    id="filter-radio-example-1"
-                    type="radio"
-                    value=""
-                    name="filter-radio"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    for="filter-radio-example-1"
-                    className="w-full ms-2 text-sm font-medium text-gray-900 rounded-sm dark:text-gray-300"
-                  >
-                    Last day
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600">
-                  <input
-                    checked=""
-                    id="filter-radio-example-2"
-                    type="radio"
-                    value=""
-                    name="filter-radio"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    for="filter-radio-example-2"
-                    className="w-full ms-2 text-sm font-medium text-gray-900 rounded-sm dark:text-gray-300"
-                  >
-                    Last 7 days
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600">
-                  <input
-                    id="filter-radio-example-3"
-                    type="radio"
-                    value=""
-                    name="filter-radio"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    for="filter-radio-example-3"
-                    className="w-full ms-2 text-sm font-medium text-gray-900 rounded-sm dark:text-gray-300"
-                  >
-                    Last 30 days
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600">
-                  <input
-                    id="filter-radio-example-4"
-                    type="radio"
-                    value=""
-                    name="filter-radio"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    for="filter-radio-example-4"
-                    className="w-full ms-2 text-sm font-medium text-gray-900 rounded-sm dark:text-gray-300"
-                  >
-                    Last month
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600">
-                  <input
-                    id="filter-radio-example-5"
-                    type="radio"
-                    value=""
-                    name="filter-radio"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    for="filter-radio-example-5"
-                    className="w-full ms-2 text-sm font-medium text-gray-900 rounded-sm dark:text-gray-300"
-                  >
-                    Last year
-                  </label>
-                </div>
-              </li>
-            </ul>
+          </div>
+          <div className="relative max-w-sm">
+            <DatePicker
+              selected={selectedDate}
+              id="datepicker-autohide"
+              onChange={(date) => setSelectedDate(date)}
+              dateFormat="yyyy-MM-dd"
+              placeholderText="Select date"
+              className="bg-gray-500 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-5 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-600 dark:focus:border-blue-600"
+            />
           </div>
         </div>
         {/* Search */}
@@ -230,6 +142,8 @@ function Orders() {
           <input
             type="text"
             id="table-search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Search for items"
           />
@@ -276,72 +190,44 @@ function Orders() {
         aria-label="Table navigation"
       >
         <span className="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">
-          Showing{" "}
-          <span className="font-semibold text-gray-900 dark:text-white">
-            1-10
-          </span>{" "}
-          of{" "}
-          <span className="font-semibold text-gray-900 dark:text-white">
-            1000
-          </span>
+          Showing {indexOfFirstItem + 1}-
+          {Math.min(indexOfLastItem, filteredOrders.length)} of{" "}
+          {filteredOrders.length}
         </span>
         <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
           <li>
-            <a
-              href="#"
+            <button
+              onClick={() => {
+                setCurrentPage(currentPage - 1);
+              }}
               className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               Previous
-            </a>
+            </button>
           </li>
           <li>
-            <a
-              href="#"
-              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >
-              1
-            </a>
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={
+                  currentPage === index + 1
+                    ? "flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    : ""
+                }
+              >
+                {index + 1}
+              </button>
+            ))}
           </li>
           <li>
-            <a
-              href="#"
-              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >
-              2
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              aria-current="page"
-              className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-            >
-              3
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >
-              4
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >
-              5
-            </a>
-          </li>
-          <li>
-            <a
+            <button
+              onClick={() => setCurrentPage(currentPage + 1)}
               href="#"
               className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               Next
-            </a>
+            </button>
           </li>
         </ul>
       </nav>
