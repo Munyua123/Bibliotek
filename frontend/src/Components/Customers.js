@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 function Customer() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,6 +28,43 @@ function Customer() {
         setLoading(false);
       });
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <svg
+          className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+          viewBox="0 0 100 101"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M50 100C77.6142 100 100 77.6142 100 50C100 22.3858 77.6142 0 50 0C22.3858 0 0 22.3858 0 50C0 77.6142 22.3858 100 50 100Z"
+            fill="currentColor"
+          />
+          <path
+            d="M93.9717 39.4279C88.8395 29.6794 80.3502 22.0001 70.0001 17.9999C66.3333 16.6666 62.6667 15.9999 59 15.9999V0C63.3333 0 67.6667 0.333333 71.9999 1C85.3332 3.00001 96.3332 10.3333 103 20C109.667 29.6677 113.333 41.6674 113.333 50C113.333 54.6671 112.667 59.3341 111.333 63"
+            stroke="currentFill"
+            stroke-width="8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span className="sr-only">Loading...</span>
+      </div>
+    );
+  }
+  // Handle Error
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-red-500">
+          <h1 className="text-2xl font-bold">Error</h1>
+          <p>{error.message}</p>
+        </div>
+      </div>
+    );
+  }
 
   const filteredCustomers = customers.filter((customer) => {
     const matchesSearch = customer.customer_name
@@ -73,288 +110,307 @@ function Customer() {
     );
   });
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <div className="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900">
-        {/* Search function */}
-        <label for="table-search" className="sr-only">
-          Search
-        </label>
-        <div className="relative ">
-          <div className="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-            <svg
-              className="w-4 h-4 text-gray-500 dark:text-gray-400"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 20"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-              />
-            </svg>
-          </div>
-          <input
-            type="text"
-            id="table-search-users"
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Search for users"
-          />
-        </div>
-      </div>
-      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th scope="col" className="p-4">
-              ID
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Customer Name
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Phone Number
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Action
-            </th>
-          </tr>
-        </thead>
-        <tbody>{displayCustomers}</tbody>
-      </table>
-      {/* <!-- Edit user modal --> */}
+    <>
       <div
-        id="editUserModal"
-        tabindex="-1"
-        aria-hidden="true"
-        className="fixed top-0 left-0 right-0 z-50 items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+        style={{
+          display: "flex",
+          justifyContent: "end",
+          marginBottom: "1rem",
+          marginTop: "1rem",
+        }}
       >
-        <div className="relative w-full max-w-2xl max-h-full">
-          {/* <!-- Modal content --> */}
-          <form className="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-            {/* <!-- Modal header --> */}
-            <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600 border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Edit user
-              </h3>
-              <button
-                type="button"
-                className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                data-modal-hide="editUserModal"
+        <NavLink to="/add_customer">
+          <button
+            type="button"
+            className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 "
+          >
+            Add Customer
+          </button>
+        </NavLink>
+      </div>
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <div className="flex items-center justify-center flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900">
+          {/* Search function */}
+          <label for="table-search" className="sr-only">
+            Search
+          </label>
+          <div className="relative ">
+            <div className="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+              <svg
+                className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
               >
-                <svg
-                  className="w-3 h-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 14"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                  />
-                </svg>
-                <span className="sr-only">Close modal</span>
-              </button>
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                />
+              </svg>
             </div>
-            {/* <!-- Modal body --> */}
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-6 gap-6">
-                <div className="col-span-6 sm:col-span-3">
-                  <label
-                    for="first-name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            <input
+              type="text"
+              id="table-search-users"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search for users"
+            />
+          </div>
+        </div>
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th scope="col" className="p-4">
+                ID
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Customer Name
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Phone Number
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>{displayCustomers}</tbody>
+        </table>
+        {/* <!-- Edit user modal --> */}
+        <div
+          id="editUserModal"
+          tabindex="-1"
+          aria-hidden="true"
+          className="fixed top-0 left-0 right-0 z-50 items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+        >
+          <div className="relative w-full max-w-2xl max-h-full">
+            {/* <!-- Modal content --> */}
+            <form className="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+              {/* <!-- Modal header --> */}
+              <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600 border-gray-200">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Edit user
+                </h3>
+                <button
+                  type="button"
+                  className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                  data-modal-hide="editUserModal"
+                >
+                  <svg
+                    className="w-3 h-3"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 14 14"
                   >
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    name="first-name"
-                    id="first-name"
-                    className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Bonnie"
-                    required=""
-                  />
-                </div>
-                <div className="col-span-6 sm:col-span-3">
-                  <label
-                    for="last-name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    name="last-name"
-                    id="last-name"
-                    className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Green"
-                    required=""
-                  />
-                </div>
-                <div className="col-span-6 sm:col-span-3">
-                  <label
-                    for="email"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="example@company.com"
-                    required=""
-                  />
-                </div>
-                <div className="col-span-6 sm:col-span-3">
-                  <label
-                    for="phone-number"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Phone Number
-                  </label>
-                  <input
-                    type="number"
-                    name="phone-number"
-                    id="phone-number"
-                    className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="e.g. +(12)3456 789"
-                    required=""
-                  />
-                </div>
-                <div className="col-span-6 sm:col-span-3">
-                  <label
-                    for="department"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Department
-                  </label>
-                  <input
-                    type="text"
-                    name="department"
-                    id="department"
-                    className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Development"
-                    required=""
-                  />
-                </div>
-                <div className="col-span-6 sm:col-span-3">
-                  <label
-                    for="company"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Company
-                  </label>
-                  <input
-                    type="number"
-                    name="company"
-                    id="company"
-                    className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="123456"
-                    required=""
-                  />
-                </div>
-                <div className="col-span-6 sm:col-span-3">
-                  <label
-                    for="current-password"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Current Password
-                  </label>
-                  <input
-                    type="password"
-                    name="current-password"
-                    id="current-password"
-                    className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="••••••••"
-                    required=""
-                  />
-                </div>
-                <div className="col-span-6 sm:col-span-3">
-                  <label
-                    for="new-password"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    New Password
-                  </label>
-                  <input
-                    type="password"
-                    name="new-password"
-                    id="new-password"
-                    className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="••••••••"
-                    required=""
-                  />
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                    />
+                  </svg>
+                  <span className="sr-only">Close modal</span>
+                </button>
+              </div>
+              {/* <!-- Modal body --> */}
+              <div className="p-6 space-y-6">
+                <div className="grid grid-cols-6 gap-6">
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      for="first-name"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      name="first-name"
+                      id="first-name"
+                      className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Bonnie"
+                      required=""
+                    />
+                  </div>
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      for="last-name"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      name="last-name"
+                      id="last-name"
+                      className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Green"
+                      required=""
+                    />
+                  </div>
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      for="email"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      id="email"
+                      className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="example@company.com"
+                      required=""
+                    />
+                  </div>
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      for="phone-number"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Phone Number
+                    </label>
+                    <input
+                      type="number"
+                      name="phone-number"
+                      id="phone-number"
+                      className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="e.g. +(12)3456 789"
+                      required=""
+                    />
+                  </div>
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      for="department"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Department
+                    </label>
+                    <input
+                      type="text"
+                      name="department"
+                      id="department"
+                      className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Development"
+                      required=""
+                    />
+                  </div>
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      for="company"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Company
+                    </label>
+                    <input
+                      type="number"
+                      name="company"
+                      id="company"
+                      className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="123456"
+                      required=""
+                    />
+                  </div>
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      for="current-password"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Current Password
+                    </label>
+                    <input
+                      type="password"
+                      name="current-password"
+                      id="current-password"
+                      className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="••••••••"
+                      required=""
+                    />
+                  </div>
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      for="new-password"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      name="new-password"
+                      id="new-password"
+                      className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="••••••••"
+                      required=""
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            {/* <!-- Modal footer --> */}
-            <div className="flex items-center p-6 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b dark:border-gray-600">
-              <button
-                type="submit"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Save all
-              </button>
-            </div>
-          </form>
+              {/* <!-- Modal footer --> */}
+              <div className="flex items-center p-6 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b dark:border-gray-600">
+                <button
+                  type="submit"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  Save all
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
-      {/* Pagination */}
-      <nav
-        className="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4"
-        aria-label="Table navigation"
-      >
-        <span className="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">
-          Showing {indexOfFirstItem + 1}-
-          {Math.min(indexOfLastItem, currentCustomers.length)} of{" "}
-          {currentCustomers.length}
-        </span>
-        <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
-          <li>
-            <button
-              onClick={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >
-              Previous
-            </button>
-          </li>
-          <li>
-            {Array.from({ length: totalPages }).map((_, index) => (
+        {/* Pagination */}
+        <nav
+          className="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4"
+          aria-label="Table navigation"
+        >
+          <span className="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+            Showing {indexOfFirstItem + 1}-
+            {Math.min(indexOfLastItem, currentCustomers.length)} of{" "}
+            {currentCustomers.length}
+          </span>
+          <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+            <li>
               <button
-                key={index}
-                onClick={() => setCurrentPage(index + 1)}
-                className={
-                  currentPage === index + 1
-                    ? "flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                    : ""
-                }
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
-                {index + 1}
+                Previous
               </button>
-            ))}
-          </li>
-          <li>
-            <button
-              onClick={() => setCurrentPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >
-              Next
-            </button>
-          </li>
-        </ul>
-      </nav>
-    </div>
+            </li>
+            <li>
+              {Array.from({ length: totalPages }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentPage(index + 1)}
+                  className={
+                    currentPage === index + 1
+                      ? "flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                      : ""
+                  }
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </li>
+            <li>
+              <button
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              >
+                Next
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </>
   );
 }
 

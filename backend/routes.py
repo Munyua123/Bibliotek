@@ -1,7 +1,7 @@
 from flask import render_template, jsonify, make_response,request
 from models import Book, Customer, Order
 from config import db, api, app
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 @app.errorhandler(404)
@@ -221,20 +221,28 @@ def get_orders():
 def add_orders():
     data = request.json
     
-    customer_id = data.get('customer_id')
-    book_id = data.get('book_id')
+    customer_name = data.get('customer_name')
+    book_name = data.get('book_name')
     return_date_str = data.get('return_date')
+    
+    if not customer_name or not book_name or not return_date_str:
+        return {"message": "Customer name, book name, and return date are required"}, 400
+    
+    customer = Customer.query.filter_by(customer_name=customer_name).first()
+    if not customer:
+        return {"message": "Customer not found"}, 404
+    
+    book = Book.query.filter_by(book_name=book_name).first()
+    if not book:
+        return {"message": "Book not found"}, 404
     
     try:
          return_date = datetime.fromisoformat(return_date_str)
     except ValueError:
         return {"message": "Invalid return date format"}, 400
+
     
-    book = Book.query.filter_by(id=book_id).first()
-    if not book:
-        return {"message": "Book not found"}, 404
-    
-    date_issued = datetime.now()
+    date_issued = datetime.now(timezone.utc)
     num_weeks = (return_date - date_issued).days // 7
     
     if num_weeks < 1:
@@ -246,8 +254,8 @@ def add_orders():
     next_order_number = (last_order.order_number + 1) if last_order and last_order.order_number else 1
     
     new_order = Order(
-        customer_id=customer_id,
-        book_id=book_id,
+        customer_id=customer.id,
+        book_id=book.id,
         order_number=next_order_number,
         return_date=return_date,
         rent_fee=rent_fee
