@@ -67,10 +67,10 @@ def get_customers():
             }
         customers.append(customer_dict)
             
-        return make_response(jsonify({
-            "Customer": customers,
-            "total_customers": len(customers)
-            }), 200)
+    return make_response(jsonify({
+        "Customer": customers,
+        "total_customers": len(customers)
+        }), 200)
         
 @app.route('/customer', methods=['POST'])       
 def add_customers():
@@ -195,9 +195,13 @@ def get_orders():
     orders = []
     
     for order in Order.query.all():
+        customer = Customer.query.filter_by(id=order.customer_id).first()
+        book = Book.query.filter_by(id=order.book_id).first()
         order_dict = {
             "id": order.id,
             "customer_id": order.customer_id,
+            "customer_name": customer.customer_name if customer else None,
+            "book_name": book.book_name if book else None,
             "book_id": order.book_id,
             "return_date": order.return_date,
             "date_issued": order.date_issued,
